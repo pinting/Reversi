@@ -1,0 +1,1 @@
+Reversi realization in pure C.
