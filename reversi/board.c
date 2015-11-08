@@ -1,4 +1,4 @@
-#include "reversi.h"
+#include "board.h"
 
 // Create a new board.
 Board board_new(int size)

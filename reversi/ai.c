@@ -1,4 +1,4 @@
-#include "reversi.h"
+#include "ai.h"
 
 static Bool pass;
 static Bool random;

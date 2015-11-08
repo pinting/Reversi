@@ -154,7 +154,11 @@
     <ClCompile Include="tui.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="reversi.h" />
+    <ClInclude Include="ai.h" />
+    <ClInclude Include="board.h" />
+    <ClInclude Include="game.h" />
+    <ClInclude Include="list.h" />
+    <ClInclude Include="tui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

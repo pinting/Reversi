@@ -1,4 +1,4 @@
-#include "reversi.h"
+#include "tui.h"
 
 static Game *game;
 

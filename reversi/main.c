@@ -1,4 +1,6 @@
-#include "reversi.h"
+#include <time.h>
+#include "game.h"
+#include "tui.h"
 
 int main(void)
 {

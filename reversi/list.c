@@ -1,4 +1,4 @@
-#include "reversi.h"
+#include "list.h"
 
 // Create a new list.
 List *list_new(int key, int value)

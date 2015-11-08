@@ -1,4 +1,4 @@
-#include "reversi.h"
+#include "game.h"
 
 // Create a new game with the default options.
 Game game_new(void)
