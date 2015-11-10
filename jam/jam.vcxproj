@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\reversi\jam_ai.c" />
+    <ClInclude Include="jam_ai.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\reversi\jam_ai.h" />
+    <ClCompile Include="jam_ai.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A395EF9F-3193-4848-8206-E85A5886B449}</ProjectGuid>
