@@ -1,4 +1,4 @@
-#include "ai.h"
+#include "jam_ai.h"
 
 static Bool pass;
 static Bool random;
@@ -54,17 +54,17 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 				if (count > count_rev)
 				{
 					debug("Board is full: win\n");
-					value = type * INT_MAX / 2;
+					value = type * INF / 2;
 				}
 				else if (count == count_rev)
 				{
 					debug("Board is full: tie\n");
-					value = minus(type) * INT_MAX / 3;
+					value = minus(type) * INF / 3;
 				}
 				else
 				{
 					debug("Board is full: loss\n");
-					value = minus(type) * INT_MAX / 2;
+					value = minus(type) * INF / 2;
 				}
 			}
 			else
@@ -125,7 +125,7 @@ Bool ai_test(Board *board, Cell type, int *x, int *y)
 	*y = -1;
 
 	debug("Calculating AI move in %d layers...\n", level);
-	ai_calc(board, type, 0, level, INT_MIN, INT_MAX, x, y);
+	ai_calc(board, type, 0, level, minus(INF), INF, x, y);
 	debug("End of search (%d, %d)\n", *x, *y);
 
 	if (*x >= 0 && *y >= 0)

@@ -3,7 +3,7 @@
 
 #include "board.h"
 #include "list.h"
-#include "ai.h"
+#include "jam_ai.h"
 
 #define CONFIG "config.cfg"
 

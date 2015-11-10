@@ -39,16 +39,13 @@ int main()
 	};
 	
 	srand((unsigned int) time(NULL));
-	
+
 	alpha_beta_init(&abd);
-	
-	
-	
+
 	init_board(&brd);
 	
 	while (!is_game_ended(&brd))
 	{
-	
 		print_board(&brd);
 		get_valid_moves(&brd, &val);
 		print_valid_moves(&val);
