@@ -81,7 +81,8 @@ Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool), v
 		if (count_rev > 0)
 		{
 			before(TRUE);
-			ai_test(&game->board, minus(type), &x, &y);
+			//ai_test(&game->board, minus(type), &x, &y);
+			rucz_test(&game->board, minus(type), &x, &y);
 			board_move(&game->board, x, y, minus(type), FALSE);
 			dump(&game->board);
 		}

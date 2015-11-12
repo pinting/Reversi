@@ -4,6 +4,7 @@
 #include "board.h"
 #include "list.h"
 #include "ai.h"
+#include "rucz.h"
 
 #define CONFIG "config.cfg"
 
