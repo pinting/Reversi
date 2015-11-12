@@ -1,7 +1,6 @@
 #ifndef TUI_H
 #define TUI_H
 
-#include <string.h>
 #include <ctype.h>
 #include "game.h"
 

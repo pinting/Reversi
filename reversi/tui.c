@@ -25,7 +25,6 @@ static void tui_pause(void)
 // Dump the board to the stdout.
 static void tui_dump(Board *board)
 {
-	char buffer[32];
 	int x, y;
 
 	printf("\n   ");
@@ -33,8 +32,7 @@ static void tui_dump(Board *board)
 	// Print column index
 	for (y = 0; y < board->size; y++)
 	{
-		sprintf(buffer, "%d", y + 1);
-		printf("%c ", *(strrchr(buffer, 0) - 1));
+		printf("%d ", 1 + y % 10);
 	}
 
 	printf("\n");
@@ -42,8 +40,7 @@ static void tui_dump(Board *board)
 	for (y = 0; y < board->size; y++)
 	{
 		// Print row index
-		sprintf(buffer, "%d", y + 1);
-		printf("%c |", *(strrchr(buffer, 0) - 1));
+		printf("%d |", 1 + y % 10);
 
 		for (x = 0; x < board->size; x++)
 		{

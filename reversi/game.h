@@ -1,7 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <string.h>
 #include "board.h"
 #include "list.h"
 #include "ai.h"
