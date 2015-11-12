@@ -193,11 +193,7 @@ static void tui_load(void)
 		tui_clear();
 		tui_help();
 
-		if (!game_load(game, buffer))
-		{
-			debug("Failed to load the game.\n");
-		}
-		else if (game_start(game, &tuti_input, &tui_before, &tui_dump, &tui_passed))
+		if (game_load(game, buffer) && game_start(game, &tuti_input, &tui_before, &tui_dump, &tui_passed))
 		{
 			tui_end();
 		}
@@ -223,9 +219,6 @@ static void tui_config_dump(void)
 			case SIZE:
 				printf("Size: %d\n", config->value);
 				break;
-			case LEVEL:
-				printf("Level: %d\n", config->value);
-				break;
 			case DEMO:
 				printf("Demo: %s\n", config->value ? "ON" : "OFF");
 				break;
@@ -235,8 +228,11 @@ static void tui_config_dump(void)
 			case RANDOM:
 				printf("Random: %s\n", config->value ? "ON" : "OFF");
 				break;
+			case LEVEL:
+				printf("Level: %d\n", config->value);
+				break;
 			case RUCZ:
-				printf("Rucz: %s\n", config->value ? "ON" : "OFF");
+				printf("Rucz: %d\n", config->value);
 				break;
 		}
 	}
@@ -244,10 +240,20 @@ static void tui_config_dump(void)
 	printf("[q] Quit\n\n");
 }
 
+// Scan an int.
+static int tui_config_scan(char *buffer)
+{
+	int count;
+
+	sscanf(buffer, "%d", &count);
+
+	return count;
+}
+
 // Show the config screen.
 static void tui_config(void)
 {
-	int key, value, count;
+	int key, value, c;
 	char buffer[32];
 	List *config;
 
@@ -266,18 +272,27 @@ static void tui_config(void)
 
 		switch (key)
 		{
-			case TYPE:
-				value = buffer[0] == 'X' ? MAX : MIN;
-				break;
-			case SIZE:
-			case LEVEL:
-				count = sscanf(buffer, "%d", &value);
-				value = count == 1 && value > 0 ? value : 4;
-				break;
 			case DEMO:
 			case PASS:
 			case RANDOM:
-				value = buffer[1] == 'N' ? TRUE : FALSE;
+				c = buffer[1];
+				value = towlower(c) == 'n' ? TRUE : FALSE;
+				break;
+			case TYPE:
+				c = buffer[0];
+				value = towlower(c) == 'x' ? MAX : MIN;
+				break;
+			case SIZE:
+				c = tui_config_scan(buffer);
+				value = c >= 4 && c % 2 == 0 ? c : 4;
+				break;
+			case LEVEL:
+				c = tui_config_scan(buffer);
+				value = c > 0 ? c : 1;
+				break;
+			case RUCZ:
+				c = tui_config_scan(buffer);
+				value = c >= 0 ? c : 0;
 				break;
 		}
 

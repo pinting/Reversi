@@ -7,5 +7,7 @@
 #include "../rucz/reversi_ai.h"
 
 Bool rucz_test(Board *board, Cell type, int *x, int *y);
+void rucz_init(int level);
+void rucz_free();
 
 #endif

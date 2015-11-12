@@ -6,7 +6,8 @@
 #include <math.h>
 
 #define DEBUG 0
-#define debug(fmt, ...) if (DEBUG) { printf("DEBUG: "); printf(fmt, __VA_ARGS__); }
+
+#define debug(n, fmt, ...) if (DEBUG >= n) { printf("DEBUG: "); printf(fmt, __VA_ARGS__); }
 #define minus(t) -1 * t
 
 typedef enum Bool

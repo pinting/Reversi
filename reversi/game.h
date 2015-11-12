@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <string.h>
 #include "board.h"
 #include "list.h"
 #include "ai.h"
@@ -10,13 +11,13 @@
 
 typedef enum Config
 {
-	TYPE = 0,
-	SIZE = 1,
-	LEVEL = 2,
-	DEMO = 3,
-	PASS = 4,
-	RANDOM = 5,
-	RUCZ = 6
+	TYPE,
+	SIZE,
+	DEMO,
+	PASS,
+	RANDOM,
+	LEVEL,
+	RUCZ
 } Config;
 
 typedef struct Game
@@ -27,6 +28,7 @@ typedef struct Game
 
 Game game_new(void);
 Bool game_start(Game *game, Bool(*coords)(int *, int *), void(*before)(Bool), void(*dump)(Board *), void(*passed)(void));
+Bool game_ai(Game *game, Cell type, int *x, int *y, int rucz);
 Bool game_export(Game *game, char *path);
 Bool game_import(Game *game, char *path);
 Bool game_load(Game *game, char *path);

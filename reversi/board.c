@@ -25,8 +25,8 @@ Board board_load(char *path)
 
 	if ((file = fopen(path, "r")) == NULL)
 	{
-		debug("ERROR: Could not load the board!\n");
-		board.size = EOF;
+		debug(1, "Could not load the board!\n");
+		board.size = 0;
 		return board;
 	}
 
@@ -66,7 +66,7 @@ Cell board_get(Board *board, int x, int y)
 		return *(board->cells + board->size * sizeof(Cell) * y + sizeof(Cell) * x);
 	}
 
-	debug("ERROR: Coords are outside the board!\n");
+	debug(1, "Coords are outside the board!\n");
 	return 0;
 }
 
@@ -90,7 +90,7 @@ Bool board_set(Board *board, int x, int y, Cell type)
 		return TRUE;
 	}
 
-	debug("ERROR: Coords are outside the board!\n");
+	debug(1, "Coords are outside the board!\n");
 	return FALSE;
 }
 
@@ -102,7 +102,7 @@ Bool board_inside(Board *board, int x, int y)
 		return TRUE;
 	}
 
-	debug("Cell (%d, %d) was not inside board (sized %d)!\n", x, y, board->size);
+	debug(3, "Cell (%d, %d) was not inside board (sized %d)!\n", x, y, board->size);
 	return FALSE;
 }
 
@@ -114,7 +114,7 @@ Bool board_save(Board *board, char *path)
 
 	if ((file = fopen(path, "w")) == NULL)
 	{
-		debug("ERROR: Could not save the board!\n");
+		debug(1, "Could not save the board!\n");
 		return FALSE;
 	}
 
@@ -202,7 +202,7 @@ int board_move(Board *board, int x, int y, Cell type, Bool test)
 					if (!test)
 					{
 						board_line(board, type, x, y, last_x, last_y);
-						debug("Place type %d from (%d, %d) to (%d, %d)\n", type, x, y, last_x, last_y);
+						debug(3, "Place type %d from (%d, %d) to (%d, %d)\n", type, x, y, last_x, last_y);
 					}
 
 					count += i;
@@ -295,7 +295,7 @@ void board_copy(Board *target, Board *source)
 		}
 	}
 
-	debug("Board copied!\n");
+	debug(3, "Board copied!\n");
 }
 
 // Init a board.
@@ -304,7 +304,7 @@ void board_init(Board *board, Bool random)
 	int x, y, c;
 	Cell cell;
 
-	debug("Init a %d sized board...\n", board->size);
+	debug(2, "Init a %d sized board...\n", board->size);
 
 	for (y = 0; y < board->size; y++)
 	{

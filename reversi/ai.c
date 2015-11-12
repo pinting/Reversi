@@ -21,7 +21,7 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 		return init;
 	}
 
-	debug("Step in level %d (searching %d)\n", level, type);
+	debug(3, "Step in level %d (searching %d)\n", level, type);
 
 	best_x = -1;
 	best_y = -1;
@@ -38,7 +38,7 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 				continue;
 			}
 			
-			debug("Valid move found: %d\n", value);
+			debug(3, "Valid move found: %d\n", value);
 
 			// Make the move on a new board
 			next = board_new(board->size);
@@ -53,17 +53,17 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 
 				if (count > count_rev)
 				{
-					debug("Board is full: win\n");
+					debug(3, "Board is full: win\n");
 					value = type * INF / 2;
 				}
 				else if (count == count_rev)
 				{
-					debug("Board is full: tie\n");
+					debug(3, "Board is full: tie\n");
 					value = minus(type) * INF / 3;
 				}
 				else
 				{
-					debug("Board is full: loss\n");
+					debug(3, "Board is full: loss\n");
 					value = minus(type) * INF / 2;
 				}
 			}
@@ -77,7 +77,7 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 			// Max
 			if (type == MAX && value > alpha || (random && rand() % 2 && value == alpha))
 			{
-				debug("New alpha: %d\n", value);
+				debug(3, "New alpha: %d\n", value);
 				alpha = value;
 				best_x = x;
 				best_y = y;
@@ -86,7 +86,7 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 			// Min
 			else if (type == MIN && value < beta || (random && rand() % 2 && value == beta))
 			{
-				debug("New beta: %d\n", value);
+				debug(3, "New beta: %d\n", value);
 				beta = value;
 				best_x = x;
 				best_y = y;
@@ -95,7 +95,7 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 			// Cut
 			if (alpha >= beta)
 			{
-				debug("New alpha-beta cut (%d >= %d)\n", alpha, beta);
+				debug(3, "New alpha-beta cut (%d >= %d)\n", alpha, beta);
 				cut = 1;
 				break;
 			}
@@ -113,7 +113,7 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 		*res_y = best_y;
 	}
 
-	debug("Step out from layer %d with %d\n", level, type == MAX ? alpha : beta);
+	debug(3, "Step out from layer %d with %d\n", level, type == MAX ? alpha : beta);
 
 	return type == MAX ? alpha : beta;
 }
@@ -124,9 +124,9 @@ Bool ai_test(Board *board, Cell type, int *x, int *y)
 	*x = -1;
 	*y = -1;
 
-	debug("Calculating AI move in %d layers...\n", level);
+	debug(3, "Calculating AI move in %d layers...\n", level);
 	ai_calc(board, type, 0, level, minus(INF), INF, x, y);
-	debug("End of search (%d, %d)\n", *x, *y);
+	debug(3, "End of search (%d, %d)\n", *x, *y);
 
 	if (*x >= 0 && *y >= 0)
 	{

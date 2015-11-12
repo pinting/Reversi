@@ -8,11 +8,11 @@ Game game_new(void)
 	
 	config = list_new(TYPE, MAX);
 	list_add(config, SIZE, 8);
-	list_add(config, LEVEL, 3);
 	list_add(config, DEMO, TRUE);
 	list_add(config, PASS, TRUE);
 	list_add(config, RANDOM, TRUE);
-	list_add(config, RUCZ, FALSE);
+	list_add(config, LEVEL, 3);
+	list_add(config, RUCZ, 0);
 
 	game.config = config;
 
@@ -22,13 +22,14 @@ Game game_new(void)
 // Start the gameplay.
 Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool), void (*dump)(Board *), void (*passed)(void))
 {
-	int x, y, count, count_rev;
+	int x, y, count, count_rev, rucz;
 	Bool pass, demo;
 	Cell type;
 
 	type = list_value(game->config, TYPE);
 	pass = list_value(game->config, PASS);
 	demo = list_value(game->config, DEMO);
+	rucz = list_value(game->config, RUCZ);
 
 	dump(&game->board);
 
@@ -48,53 +49,67 @@ Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool), v
 			if (demo)
 			{
 				before(TRUE);
-				ai_test(&game->board, type, &x, &y);
+				game_ai(game, type, &x, &y, 0);
 				board_move(&game->board, x, y, type, FALSE);
-				dump(&game->board);
-			}
-			else if (input(&x, &y))
-			{
-				before(FALSE);
-
-				while (board_move(&game->board, x, y, type, FALSE) == 0)
-				{
-					input(&x, &y);
-				}
-				
 				dump(&game->board);
 			}
 			else
 			{
-				return FALSE;
+				before(FALSE);
+
+				do
+				{
+					if (!input(&x, &y))
+					{
+						return FALSE;
+					}
+				} while (board_move(&game->board, x, y, type, FALSE) == 0);
+				
+				dump(&game->board);
 			}
 		}
-		else if(!pass)
+		else if(pass)
 		{
-			return TRUE;
+			passed();
 		}
 		else
 		{
-			passed();
+			return TRUE;
 		}
 
 		// Reverse type
 		if (count_rev > 0)
 		{
 			before(TRUE);
-			//ai_test(&game->board, minus(type), &x, &y);
-			rucz_test(&game->board, minus(type), &x, &y);
+			game_ai(game, minus(type), &x, &y, rucz);
 			board_move(&game->board, x, y, minus(type), FALSE);
 			dump(&game->board);
 		}
-		else if (!pass)
-		{
-			return TRUE;
-		}
-		else
+		else if (pass)
 		{
 			passed();
 		}
+		else
+		{
+			return TRUE;
+		}
 	}
+}
+
+// Calculate the best move with the chosen AI.
+Bool game_ai(Game *game, Cell type, int *x, int *y, int rucz)
+{
+	if (rucz && rucz_test(&game->board, type, x, y))
+	{
+		return TRUE;
+	}
+	else if (rucz)
+	{
+		debug(1, "Failed to use rucz AI.");
+	}
+
+	// Sometimes the rucz AI finds no more moves while the default one does
+	return ai_test(&game->board, type, x, y);
 }
 
 // Export game options to a file.
@@ -105,7 +120,7 @@ Bool game_export(Game *game, char *path)
 
 	if ((file = fopen(path, "w")) == NULL)
 	{
-		debug("ERROR: Could not export game!\n");
+		debug(1, "Could not export game!\n");
 		return FALSE;
 	}
 
@@ -130,7 +145,7 @@ Bool game_import(Game *game, char *path)
 
 	if ((file = fopen(path, "r")) == NULL)
 	{
-		debug("ERROR: Could not import game!\n");
+		debug(1, "Could not import game!\n");
 		return FALSE;
 	}
 
@@ -161,16 +176,17 @@ Bool game_load(Game *game, char *path)
 	level = list_value(game->config, LEVEL);
 	pass = list_value(game->config, PASS);
 
+	rucz_init(level);
 	ai_init(pass, random, level);
 	game->board = board_load(path);
 
-	if (game->board.size > 0)
+	if (!game->board.size)
 	{
-		debug("ERROR: Could not load game!\n");
-		return TRUE;
+		debug(1, "Could not load game!\n");
+		return FALSE;
 	}
 
-	return FALSE;
+	return TRUE;
 }
 
 // Save the board to a file.
@@ -188,6 +204,7 @@ Cell game_end(Game *game)
 	min = board_count(&game->board, MIN);
 
 	board_free(&game->board);
+	rucz_free();
 
 	if (max > min)
 	{
@@ -206,7 +223,7 @@ Cell game_end(Game *game)
 // Init the game with the given options.
 void game_init(Game *game)
 {
-	int random, level, size;
+	int random, level, size, rucz;
 	Bool pass;
 	Cell type;
 
@@ -215,12 +232,15 @@ void game_init(Game *game)
 	size = list_value(game->config, SIZE);
 	pass = list_value(game->config, PASS);
 	random = list_value(game->config, RANDOM);
+	rucz = list_value(game->config, RUCZ);
 
+	rucz_init(rucz);
 	ai_init(pass, random, level);
 	game->board = board_new(size);
 	board_init(&game->board, random);
 }
 
+// Free up the game.
 void game_free(Game *game)
 {
 	list_free(game->config);

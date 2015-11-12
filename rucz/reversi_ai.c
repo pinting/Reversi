@@ -14,12 +14,10 @@ size_t get_valid_moves_size(void)
 	return sizeof(valid_moves_t);
 }
 
-/*
-static inline int min(int a, int b)
+static int _min(int a, int b)
 {
 	return a > b ? b : a;
 }
-*/
 
 int get_valid_moves(board_t *brd, valid_moves_t *vm)
 {

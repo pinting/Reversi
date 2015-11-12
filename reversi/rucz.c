@@ -12,12 +12,12 @@ static alpha_beta_data_t abd = {
 		.eval_position = (alpha_beta_eval_position_fun_t)eval_position,
 		.get_move = (alpha_beta_get_move_fun_t)get_move,
 	},
-	.n_levels = 5,
 	.enable_alpha_cuts = 1,
 	.enable_beta_cuts = 1,
 };
 
-static field_t get_field(Cell source)
+// Convert cell to field.
+static field_t rucz_field(Cell source)
 {
 	switch (source)
 	{
@@ -32,32 +32,62 @@ static field_t get_field(Cell source)
 	}
 }
 
-static void convert_board(Board *source, Cell type, board_t *dest)
+// Convert the board to the rucz format.
+static void rucz_board(Board *source, Cell type, board_t *dest)
 {
 	int x, y;
-
-	dest->turn = get_field(type);
 
 	for (y = 0; y < BOARD_SIZE; y++)
 	{
 		for (x = 0; x < BOARD_SIZE; x++)
 		{
-			dest->position[y][x] = get_field(board_get(source, x, y));
+			dest->position[y][x] = rucz_field(board_get(source, x, y));
 		}
 	}
+
+	dest->turn = rucz_field(type);
 }
 
+// Search for the best move.
 Bool rucz_test(Board *board, Cell type, int *x, int *y)
 {
-	reversi_ai_data_t aid = { .own = get_field(type) };
+	reversi_ai_data_t aid;
 	board_t brd;
 	move_t mv;
 
-	convert_board(board, type, &brd);
+	// Sadly rucz only supports fixed sized boards - for now
+	if (board->size != BOARD_SIZE)
+	{
+		return FALSE;
+	}
+
+	aid.own = rucz_field(type);
+	mv.col = -1;
+	mv.row = -1;
+
+	rucz_board(board, type, &brd);
 	alpha_beta_move(&abd, &brd, &aid, &mv, &abst);
+
+	if (mv.col < 0 || mv.row < 0)
+	{
+		return FALSE;
+	}
 
 	*x = mv.col;
 	*y = mv.row;
 
 	return TRUE;
+}
+
+// Init the rucz AI.
+void rucz_init(int level)
+{
+	alpha_beta_init(&abd);
+	abd.n_levels = level;
+}
+
+// Free it up.
+void rucz_free()
+{
+	alpha_beta_finish(&abd);
 }
