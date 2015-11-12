@@ -109,12 +109,12 @@ game_result_t score_board(board_t *brd, int *b, int *w)
 	return GAME_GOES_ON;
 }
 
-static inline int in_board(int r, int c)
+static int in_board(int r, int c)
 {
 	return (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE);
 }
 
-static inline field_t opponent(field_t f)
+static field_t opponent(field_t f)
 {
 	return (f == BLACK) ? WHITE : BLACK; 
 }

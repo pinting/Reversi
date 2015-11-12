@@ -1,6 +1,7 @@
 #include <time.h>
 #include "game.h"
 #include "tui.h"
+#include "rucz.h"
 
 int main(void)
 {

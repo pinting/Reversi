@@ -119,7 +119,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../rucz;../jam;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,22 +147,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ai.c" />
     <ClCompile Include="board.c" />
     <ClCompile Include="list.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="game.c" />
+    <ClCompile Include="rucz.c" />
     <ClCompile Include="tui.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ai.h" />
     <ClInclude Include="board.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="list.h" />
+    <ClInclude Include="rucz.h" />
     <ClInclude Include="tui.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\jam\jam.vcxproj">
-      <Project>{a395ef9f-3193-4848-8206-e85a5886b449}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\rucz\rucz.vcxproj">
       <Project>{2d16ad89-4c67-4ca6-a9e6-53e1c1d87371}</Project>
     </ProjectReference>

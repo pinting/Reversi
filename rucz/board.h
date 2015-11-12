@@ -3,8 +3,8 @@
  * \brief interface of the board types and functions
  */
 
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef GAME_BOARD_H
+#define GAME_BOARD_H
 
 #include <stddef.h>
 

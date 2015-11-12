@@ -12,6 +12,7 @@ Game game_new(void)
 	list_add(config, DEMO, TRUE);
 	list_add(config, PASS, TRUE);
 	list_add(config, RANDOM, TRUE);
+	list_add(config, RUCZ, FALSE);
 
 	game.config = config;
 

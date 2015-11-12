@@ -235,6 +235,9 @@ static void tui_config_dump(void)
 			case RANDOM:
 				printf("Random: %s\n", config->value ? "ON" : "OFF");
 				break;
+			case RUCZ:
+				printf("Rucz: %s\n", config->value ? "ON" : "OFF");
+				break;
 		}
 	}
 

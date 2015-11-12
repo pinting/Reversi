@@ -3,7 +3,7 @@
 
 #include "board.h"
 #include "list.h"
-#include "jam_ai.h"
+#include "ai.h"
 
 #define CONFIG "config.cfg"
 
@@ -14,7 +14,8 @@ typedef enum Config
 	LEVEL = 2,
 	DEMO = 3,
 	PASS = 4,
-	RANDOM = 5
+	RANDOM = 5,
+	RUCZ = 6
 } Config;
 
 typedef struct Game
