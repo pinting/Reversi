@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define DEBUG 0
+#define DEBUG 1
 
 #define debug(n, fmt, ...) if (DEBUG >= n) { printf("DEBUG: "); printf(fmt, __VA_ARGS__); }
 #define minus(t) -1 * t

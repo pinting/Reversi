@@ -226,7 +226,7 @@ int board_moves_left(Board *board, Cell type)
 	{
 		for (x = 0; x < board->size; x++)
 		{
-			if (board_move(board, x, y, type, 1) > 0)
+			if (board_move(board, x, y, type, TRUE) > 0)
 			{
 				count++;
 			}
@@ -302,7 +302,7 @@ void board_copy(Board *target, Board *source)
 void board_init(Board *board, Bool random)
 {
 	int x, y, c;
-	Cell cell;
+	Cell type;
 
 	debug(2, "Init a %d sized board...\n", board->size);
 
@@ -314,13 +314,13 @@ void board_init(Board *board, Bool random)
 		}
 	}
 
-	cell = random && rand() % 2 ? MIN : MAX;
+	type = random && rand() % 2 ? MIN : MAX;
 	c = board->size / 2;
 
-	board_set(board, c - 1, c - 1, cell);
-	board_set(board, c - 1, c, minus(cell));
-	board_set(board, c, c - 1, minus(cell));
-	board_set(board, c, c, cell);
+	board_set(board, c - 1, c - 1, type);
+	board_set(board, c - 1, c, minus(type));
+	board_set(board, c, c - 1, minus(type));
+	board_set(board, c, c, type);
 }
 
 // Free up a board.

@@ -32,7 +32,7 @@ static void tui_dump(Board *board)
 	// Print column index
 	for (y = 0; y < board->size; y++)
 	{
-		printf("%d ", 1 + y % 10);
+		printf("%d ", (1 + y) % 10);
 	}
 
 	printf("\n");
@@ -40,7 +40,7 @@ static void tui_dump(Board *board)
 	for (y = 0; y < board->size; y++)
 	{
 		// Print row index
-		printf("%d |", 1 + y % 10);
+		printf("%d |", (1 + y) % 10);
 
 		for (x = 0; x < board->size; x++)
 		{
@@ -73,7 +73,7 @@ static void tui_dump(Board *board)
 // Save the board.
 static void tui_save(void)
 {
-	char buffer[32];
+	char buffer[64];
 
 	printf("Name: ");
 
@@ -88,7 +88,7 @@ static void tui_save(void)
 // Get an input.
 static Bool tuti_input(int *x, int *y)
 {
-	char buffer[32];
+	char buffer[64];
 
 	while (1)
 	{
@@ -119,8 +119,16 @@ static Bool tuti_input(int *x, int *y)
 }
 
 // Executed before moves.
-static void tui_before(Bool ai)
+static void tui_before(Bool ai, Cell type)
 {
+	printf("%c turn!\n", type == MAX ? 'X' : 'O');
+
+	if (PAUSE)
+	{
+		printf("Game is paused!");
+		tui_pause();
+	}
+
 	if (ai)
 	{
 		printf("AI moving...\n");
@@ -180,7 +188,7 @@ static void tui_new(void)
 // Load a game.
 static void tui_load(void)
 {
-	char buffer[32];
+	char buffer[64];
 
 	printf("Name: ");
 
@@ -289,7 +297,7 @@ static void tui_config(void)
 				break;
 			case RUCZ:
 				c = tui_config_scan(buffer);
-				value = c >= 0 ? c : 0;
+				value = c;
 				break;
 		}
 

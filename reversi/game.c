@@ -20,17 +20,12 @@ Game game_new(void)
 }
 
 // Start the gameplay.
-Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool), void (*dump)(Board *), void (*passed)(void))
+Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool, Cell), void (*dump)(Board *), void (*passed)(void))
 {
-	int x, y, count, count_rev, rucz;
-	Bool pass, demo;
+	int x, y, count, count_rev;
 	Cell type;
 
-	type = list_value(game->config, TYPE);
-	pass = list_value(game->config, PASS);
-	demo = list_value(game->config, DEMO);
-	rucz = list_value(game->config, RUCZ);
-
+	type = cfg(TYPE);
 	dump(&game->board);
 
 	while (1)
@@ -46,16 +41,16 @@ Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool), v
 		// Our type
 		if (count > 0)
 		{
-			if (demo)
+			if (cfg(DEMO))
 			{
-				before(TRUE);
-				game_ai(game, type, &x, &y, 0);
+				before(TRUE, type);
+				game_ai(game, type, &x, &y, cfg(RUCZ) < 0);
 				board_move(&game->board, x, y, type, FALSE);
 				dump(&game->board);
 			}
 			else
 			{
-				before(FALSE);
+				before(FALSE, type);
 
 				do
 				{
@@ -68,7 +63,7 @@ Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool), v
 				dump(&game->board);
 			}
 		}
-		else if(pass)
+		else if(cfg(PASS))
 		{
 			passed();
 		}
@@ -80,12 +75,12 @@ Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool), v
 		// Reverse type
 		if (count_rev > 0)
 		{
-			before(TRUE);
-			game_ai(game, minus(type), &x, &y, rucz);
+			before(TRUE, minus(type));
+			game_ai(game, minus(type), &x, &y, cfg(RUCZ) != 0);
 			board_move(&game->board, x, y, minus(type), FALSE);
 			dump(&game->board);
 		}
-		else if (pass)
+		else if (cfg(PASS))
 		{
 			passed();
 		}
@@ -97,10 +92,11 @@ Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool), v
 }
 
 // Calculate the best move with the chosen AI.
-Bool game_ai(Game *game, Cell type, int *x, int *y, int rucz)
+Bool game_ai(Game *game, Cell type, int *x, int *y, Bool rucz)
 {
 	if (rucz && rucz_test(&game->board, type, x, y))
 	{
+		debug(2, "Using rucz AI\n");
 		return TRUE;
 	}
 	else if (rucz)
@@ -169,16 +165,12 @@ Bool game_import(Game *game, char *path)
 // Init the game and load a board from a save file.
 Bool game_load(Game *game, char *path)
 {
-	int random, level;
-	Bool pass;
+	char buffer[64];
 
-	random = list_value(game->config, RANDOM);
-	level = list_value(game->config, LEVEL);
-	pass = list_value(game->config, PASS);
-
-	rucz_init(level);
-	ai_init(pass, random, level);
-	game->board = board_load(path);
+	sprintf(buffer, "%s.sav", path);
+	rucz_init(cfg(LEVEL));
+	ai_init(cfg(PASS), cfg(RANDOM), cfg(LEVEL));
+	game->board = board_load(buffer);
 
 	if (!game->board.size)
 	{
@@ -192,16 +184,29 @@ Bool game_load(Game *game, char *path)
 // Save the board to a file.
 Bool game_save(Game *game, char *path)
 {
-	return board_save(&game->board, path);
+	char buffer[64];
+
+	sprintf(buffer, "%s.sav", path);
+
+	return board_save(&game->board, buffer);
 }
 
 // End the game and get the winner cell.
 Cell game_end(Game *game)
 {
-	int min, max;
+	int min, max, now;
+	char buffer[32];
 
 	max = board_count(&game->board, MAX);
 	min = board_count(&game->board, MIN);
+
+	if (END_SAVE)
+	{
+		now = (int)time(NULL);
+		sprintf(buffer, "%d", now);
+		game_save(game, buffer);
+		debug(1, "Saved game to %s\n", buffer);
+	}
 
 	board_free(&game->board);
 	rucz_free();
@@ -223,21 +228,10 @@ Cell game_end(Game *game)
 // Init the game with the given options.
 void game_init(Game *game)
 {
-	int random, level, size, rucz;
-	Bool pass;
-	Cell type;
-
-	type = list_value(game->config, TYPE);
-	level = list_value(game->config, LEVEL);
-	size = list_value(game->config, SIZE);
-	pass = list_value(game->config, PASS);
-	random = list_value(game->config, RANDOM);
-	rucz = list_value(game->config, RUCZ);
-
-	rucz_init(rucz);
-	ai_init(pass, random, level);
-	game->board = board_new(size);
-	board_init(&game->board, random);
+	rucz_init(abs(cfg(RUCZ)));
+	ai_init(cfg(PASS), cfg(RANDOM), cfg(LEVEL));
+	game->board = board_new(cfg(SIZE));
+	board_init(&game->board, cfg(RANDOM));
 }
 
 // Free up the game.
