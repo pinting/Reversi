@@ -1,21 +1,5 @@
 #include "rucz.h"
 
-static alpha_beta_stats_t abst;
-static alpha_beta_data_t abd = {
-	.funs = {
-		.get_move_size = (alpha_beta_get_size_fun_t)get_move_size,
-		.get_board_size = (alpha_beta_get_size_fun_t)get_board_size,
-		.make_move = (alpha_beta_make_move_fun_t)make_move,
-		.is_game_ended = (alpha_beta_is_game_ended_fun_t)is_game_ended,
-		.get_valid_moves_size = (alpha_beta_get_size_fun_t)get_valid_moves_size,
-		.get_valid_moves = (alpha_beta_get_valid_moves_fun_t)get_valid_moves,
-		.eval_position = (alpha_beta_eval_position_fun_t)eval_position,
-		.get_move = (alpha_beta_get_move_fun_t)get_move,
-	},
-	.enable_alpha_cuts = 1,
-	.enable_beta_cuts = 1,
-};
-
 // Convert cell to field.
 static field_t rucz_field(Cell source)
 {
@@ -49,7 +33,7 @@ static void rucz_board(Board *source, Cell type, board_t *dest)
 }
 
 // Search for the best move.
-Bool rucz_test(Board *board, Cell type, int *x, int *y)
+Bool rucz_test(Rucz *rucz, Board *board, Cell type, int *x, int *y)
 {
 	reversi_ai_data_t aid;
 	board_t brd;
@@ -66,7 +50,7 @@ Bool rucz_test(Board *board, Cell type, int *x, int *y)
 	mv.row = -1;
 
 	rucz_board(board, type, &brd);
-	alpha_beta_move(&abd, &brd, &aid, &mv, &abst);
+	alpha_beta_move(&rucz->abd, &brd, &aid, &mv, &rucz->abst);
 
 	if (mv.col < 0 || mv.row < 0)
 	{
@@ -79,15 +63,30 @@ Bool rucz_test(Board *board, Cell type, int *x, int *y)
 	return TRUE;
 }
 
-// Init the rucz AI.
-void rucz_init(int level)
+// Free it up.
+void rucz_free(Rucz *rucz)
 {
-	alpha_beta_init(&abd);
-	abd.n_levels = level;
+	alpha_beta_finish(&rucz->abd);
 }
 
-// Free it up.
-void rucz_free()
+// Init the rucz AI.
+Rucz rucz_init(int level)
 {
-	alpha_beta_finish(&abd);
+	Rucz rucz;
+
+	rucz.abd.funs.get_move_size = (alpha_beta_get_size_fun_t)get_move_size;
+	rucz.abd.funs.get_board_size = (alpha_beta_get_size_fun_t)get_board_size;
+	rucz.abd.funs.make_move = (alpha_beta_make_move_fun_t)make_move;
+	rucz.abd.funs.is_game_ended = (alpha_beta_is_game_ended_fun_t)is_game_ended;
+	rucz.abd.funs.get_valid_moves_size = (alpha_beta_get_size_fun_t)get_valid_moves_size;
+	rucz.abd.funs.get_valid_moves = (alpha_beta_get_valid_moves_fun_t)get_valid_moves;
+	rucz.abd.funs.eval_position = (alpha_beta_eval_position_fun_t)eval_position;
+	rucz.abd.funs.get_move = (alpha_beta_get_move_fun_t)get_move;
+	rucz.abd.enable_alpha_cuts = 1;
+	rucz.abd.enable_beta_cuts = 1;
+	rucz.abd.n_levels = level;
+
+	alpha_beta_init(&rucz.abd);
+
+	return rucz;
 }

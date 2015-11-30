@@ -1,5 +1,8 @@
 #include "game.h"
 
+static Rucz rucz; // Rucz AI
+static AI ai; // Default AI
+
 // Create a new game with the default options.
 Game game_new(void)
 {
@@ -19,34 +22,46 @@ Game game_new(void)
 	return game;
 }
 
-// Start the gameplay.
-Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool, Cell), void (*dump)(Board *), void (*passed)(void))
+// Check if the game has ended.
+static Bool game_ended(Game *game)
 {
-	int x, y, count, count_rev;
+	int min = board_moves_left(&game->board, MIN);
+	int max = board_moves_left(&game->board, MAX);
+
+	if (!min && !max)
+	{
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+// Start the gameplay.
+Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool, Cell), void (*dump)(Board *, int, int), void (*passed)(Cell))
+{
 	Cell type;
+	int x, y;
 
 	type = cfg(TYPE);
-	dump(&game->board);
+	dump(&game->board, -1, -1);
 
 	while (1)
 	{
-		count_rev = board_moves_left(&game->board, minus(type));
-		count = board_moves_left(&game->board, type);
-
-		if (!count && !count_rev)
+		// Check if the game has ended
+		if (game_ended(game))
 		{
 			return TRUE;
 		}
 
 		// Our type
-		if (count > 0)
+		if (board_moves_left(&game->board, type) > 0)
 		{
 			if (cfg(DEMO))
 			{
 				before(TRUE, type);
 				game_ai(game, type, &x, &y, cfg(RUCZ) < 0);
 				board_move(&game->board, x, y, type, FALSE);
-				dump(&game->board);
+				dump(&game->board, x, y);
 			}
 			else
 			{
@@ -60,29 +75,35 @@ Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool, Ce
 					}
 				} while (board_move(&game->board, x, y, type, FALSE) == 0);
 				
-				dump(&game->board);
+				dump(&game->board, x, y);
 			}
 		}
 		else if(cfg(PASS))
 		{
-			passed();
+			passed(type);
 		}
 		else
 		{
 			return TRUE;
 		}
 
+		// Check if the game has ended
+		if (game_ended(game))
+		{
+			return TRUE;
+		}
+
 		// Reverse type
-		if (count_rev > 0)
+		if (board_moves_left(&game->board, minus(type)) > 0)
 		{
 			before(TRUE, minus(type));
 			game_ai(game, minus(type), &x, &y, cfg(RUCZ) != 0);
 			board_move(&game->board, x, y, minus(type), FALSE);
-			dump(&game->board);
+			dump(&game->board, x, y);
 		}
 		else if (cfg(PASS))
 		{
-			passed();
+			passed(minus(type));
 		}
 		else
 		{
@@ -92,20 +113,20 @@ Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool, Ce
 }
 
 // Calculate the best move with the chosen AI.
-Bool game_ai(Game *game, Cell type, int *x, int *y, Bool rucz)
+Bool game_ai(Game *game, Cell type, int *x, int *y, Bool rucz_enabled)
 {
-	if (rucz && rucz_test(&game->board, type, x, y))
+	if (rucz_enabled && rucz_test(&rucz, &game->board, type, x, y))
 	{
 		debug(2, "Using rucz AI\n");
 		return TRUE;
 	}
-	else if (rucz)
+	else if (rucz_enabled)
 	{
 		debug(1, "Failed to use rucz AI.");
 	}
 
 	// Sometimes the rucz AI finds no more moves while the default one does
-	return ai_test(&game->board, type, x, y);
+	return ai_test(&ai, &game->board, type, x, y);
 }
 
 // Export game options to a file.
@@ -167,9 +188,10 @@ Bool game_load(Game *game, char *path)
 {
 	char buffer[64];
 
+	rucz = rucz_init(abs(cfg(RUCZ)));
+	ai = ai_init(cfg(PASS), cfg(RANDOM), cfg(LEVEL));
+
 	sprintf(buffer, "%s.sav", path);
-	rucz_init(cfg(LEVEL));
-	ai_init(cfg(PASS), cfg(RANDOM), cfg(LEVEL));
 	game->board = board_load(buffer);
 
 	if (!game->board.size)
@@ -209,7 +231,7 @@ Cell game_end(Game *game)
 	}
 
 	board_free(&game->board);
-	rucz_free();
+	rucz_free(&rucz);
 
 	if (max > min)
 	{
@@ -228,8 +250,9 @@ Cell game_end(Game *game)
 // Init the game with the given options.
 void game_init(Game *game)
 {
-	rucz_init(abs(cfg(RUCZ)));
-	ai_init(cfg(PASS), cfg(RANDOM), cfg(LEVEL));
+	rucz = rucz_init(abs(cfg(RUCZ)));
+	ai = ai_init(cfg(PASS), cfg(RANDOM), cfg(LEVEL));
+
 	game->board = board_new(cfg(SIZE));
 	board_init(&game->board, cfg(RANDOM));
 }

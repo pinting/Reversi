@@ -23,7 +23,7 @@ static void tui_pause(void)
 }
 
 // Dump the board to the stdout.
-static void tui_dump(Board *board)
+static void tui_dump(Board *board, int last_x, int last_y)
 {
 	int x, y;
 
@@ -48,10 +48,10 @@ static void tui_dump(Board *board)
 			switch (board_get(board, x, y))
 			{
 				case MAX:
-					printf("X");
+					printf("%c", LAST_MOVE && last_x == x && last_y == y ? '#' : 'X');
 					break;
 				case MIN:
-					printf("O");
+					printf("%c", LAST_MOVE && last_x == x && last_y == y ? '#' : 'O');
 					break;
 				case BLANK:
 					printf(" ");
@@ -96,14 +96,14 @@ static Bool tuti_input(int *x, int *y)
 		fgets(buffer, 32, stdin);
 
 		// Save the board and quit
-		if (buffer[0] == 's')
+		if (towlower(buffer[0]) == 's')
 		{
 			tui_save();
 			return FALSE;
 		}
 
 		// Quit from the game
-		if (buffer[0] == 'q')
+		if (towlower(buffer[0]) == 'q')
 		{
 			return FALSE;
 		}
@@ -136,9 +136,10 @@ static void tui_before(Bool ai, Cell type)
 }
 
 // Executed on pass.
-static void tui_passed(void)
+static void tui_passed(Cell type)
 {
-	printf("Pass!\n");
+	printf("%c turn!\n", type == MAX ? 'X' : 'O');
+	printf("Pass!\n\n");
 }
 
 // End the game and print the winner.
@@ -163,13 +164,8 @@ static void tui_end(void)
 // Show help message before the gameplay.
 static void tui_help(void)
 {
-	Cell type;
-
 	printf("[s] Save\n");
-	printf("[q] Quit\n\n");
-
-	type = list_value(game->config, TYPE);
-	printf("Playing as %c!\n", type == MAX ? 'X' : 'O');
+	printf("[q] Quit\n");
 }
 
 // Start a new game.
@@ -237,7 +233,7 @@ static void tui_config_dump(void)
 				printf("Level: %d\n", config->value);
 				break;
 			case RUCZ:
-				printf("Rucz: %d\n", config->value);
+				printf("Rucz: %d ([+] enemy [-] both)\n", config->value);
 				break;
 		}
 	}
@@ -280,12 +276,12 @@ static void tui_config(void)
 			case DEMO:
 			case PASS:
 			case RANDOM:
-				c = buffer[1];
-				value = towlower(c) == 'n' ? TRUE : FALSE;
+				c = towlower(buffer[1]);
+				value = c == 'n' ? TRUE : FALSE;
 				break;
 			case TYPE:
-				c = buffer[0];
-				value = towlower(c) == 'x' ? MAX : MIN;
+				c = towlower(buffer[0]);
+				value = c == 'x' ? MAX : MIN;
 				break;
 			case SIZE:
 				c = tui_config_scan(buffer);
@@ -334,7 +330,7 @@ void tui_start(Game *_game)
 		scanf("%c", &buffer);
 		tui_pause();
 
-		switch (buffer)
+		switch (towlower(buffer))
 		{
 			case '1':
 				tui_new();

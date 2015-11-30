@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\ai">
+      <UniqueIdentifier>{66c6e1ee-b243-447e-9f3e-53613aac1bdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ai">
+      <UniqueIdentifier>{54996c5b-8bf7-4395-bf68-8da118e7e5c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="board.c">
@@ -27,14 +33,14 @@
     <ClCompile Include="list.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ai.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rucz.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\ai</Filter>
+    </ClCompile>
+    <ClCompile Include="ai.c">
+      <Filter>Source Files\ai</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,11 +56,11 @@
     <ClInclude Include="game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ai.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="rucz.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\ai</Filter>
+    </ClInclude>
+    <ClInclude Include="ai.h">
+      <Filter>Header Files\ai</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

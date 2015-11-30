@@ -30,7 +30,7 @@ typedef struct Game
 } Game;
 
 Game game_new(void);
-Bool game_start(Game *game, Bool(*coords)(int *, int *), void(*before)(Bool, Cell), void(*dump)(Board *), void(*passed)(void));
+Bool game_start(Game *game, Bool(*coords)(int *, int *), void(*before)(Bool, Cell), void(*dump)(Board *, int, int), void(*passed)(Cell));
 Bool game_ai(Game *game, Cell type, int *x, int *y, Bool rucz);
 Bool game_export(Game *game, char *path);
 Bool game_import(Game *game, char *path);

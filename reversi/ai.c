@@ -1,15 +1,11 @@
 #include "ai.h"
 
-static Bool pass;
-static Bool random;
-static int level;
-
 // Calculate the best next move of a type.
 // @init means the start value, which should be 0.
 // @level means the maximum search level.
 // @alpha means the deafult alpha size (-INF).
 // @beta means the default beta size (+INF).
-static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int beta, int *res_x, int *res_y)
+static int ai_calc(AI *ai, Board *board, Cell type, int init, int level, int alpha, int beta, int *res_x, int *res_y)
 {
 	int value, x, y, count, count_rev, best_x, best_y;
 	Board next;
@@ -46,7 +42,7 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 			board_move(&next, x, y, type, FALSE);
 
 			// Check if there are any moves left for the enemy
-			if((pass && !board_count(&next, BLANK)) || (!pass && !board_moves_left(&next, minus(type))))
+			if((ai->pass && !board_count(&next, BLANK)) || (!ai->pass && !board_moves_left(&next, minus(type))))
 			{
 				count = board_count(&next, type);
 				count_rev = board_count(&next, minus(type));
@@ -69,13 +65,13 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 			}
 			else
 			{
-				value = ai_calc(&next, minus(type), value, level - 1, alpha, beta, NULL, NULL);
+				value = ai_calc(ai, &next, minus(type), value, level - 1, alpha, beta, NULL, NULL);
 			}
 
 			board_free(&next);
 
 			// Max
-			if (type == MAX && value > alpha || (random && rand() % 2 && value == alpha))
+			if (type == MAX && value > alpha || (ai->random && rand() % 2 && value == alpha))
 			{
 				debug(3, "New alpha: %d\n", value);
 				alpha = value;
@@ -84,7 +80,7 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 			}
 
 			// Min
-			else if (type == MIN && value < beta || (random && rand() % 2 && value == beta))
+			else if (type == MIN && value < beta || (ai->random && rand() % 2 && value == beta))
 			{
 				debug(3, "New beta: %d\n", value);
 				beta = value;
@@ -119,13 +115,13 @@ static int ai_calc(Board *board, Cell type, int init, int level, int alpha, int 
 }
 
 // Get the best move coords with a type.
-Bool ai_test(Board *board, Cell type, int *x, int *y)
+Bool ai_test(AI *ai, Board *board, Cell type, int *x, int *y)
 {
 	*x = -1;
 	*y = -1;
 
-	debug(3, "Calculating AI move in %d layers...\n", level);
-	ai_calc(board, type, 0, level, minus(INF), INF, x, y);
+	debug(3, "Calculating AI move in %d layers...\n", ai->level);
+	ai_calc(ai, board, type, 0, ai->level, minus(INF), INF, x, y);
 	debug(3, "End of search (%d, %d)\n", *x, *y);
 
 	if (*x >= 0 && *y >= 0)
@@ -137,9 +133,13 @@ Bool ai_test(Board *board, Cell type, int *x, int *y)
 }
 
 // Init the AI.
-void ai_init(Bool _pass, Bool _random, int _level)
+AI ai_init(Bool pass, Bool random, int level)
 {
-	pass = _pass;
-	random = _random;
-	level = _level;
+	AI ai;
+
+	ai.pass = pass;
+	ai.random = random;
+	ai.level = level;
+
+	return ai;
 }

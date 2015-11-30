@@ -6,7 +6,14 @@
 
 #define INF INT_MAX
 
-Bool ai_test(Board *board, Cell type, int *x, int *y);
-void ai_init(Bool pass, Bool random, int level);
+typedef struct AI
+{
+	Bool pass;
+	Bool random;
+	int level;
+} AI;
+
+Bool ai_test(AI *ai, Board *board, Cell type, int *x, int *y);
+AI ai_init(Bool pass, Bool random, int level);
 
 #endif
