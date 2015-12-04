@@ -6,6 +6,7 @@
 
 #define PAUSE 0
 #define LAST_MOVE 1
+#define CLEAR_SIZE 30
 
 void tui_start(Game *game);
 

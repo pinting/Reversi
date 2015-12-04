@@ -2,18 +2,18 @@
 
 static Game *game;
 
-// Clear the screen.
+/// Clear the screen. 
 static void tui_clear(void)
 {
 	int i;
 
-	for (i = 0; i < 30; i++)
+	for (i = 0; i < CLEAR_SIZE; i++)
 	{
 		printf("\n");
 	}
 }
 
-// Pause the game or eat new lines.
+/// Pause the game or eat the junk of the scanf function.
 static void tui_pause(void)
 {
 	while (getchar() != '\n')
@@ -22,7 +22,10 @@ static void tui_pause(void)
 	}
 }
 
-// Dump the board to the stdout.
+/// Dump the board to the standard output.
+/// @param board Board structure
+/// @param last_x The last movement X coord
+/// @param last_y The last movement Y coord
 static void tui_dump(Board *board, int last_x, int last_y)
 {
 	int x, y;
