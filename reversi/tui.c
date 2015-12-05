@@ -330,8 +330,8 @@ void tui_start(Game *_game)
 		printf("| | |  __/\\ V /  __/ |  \\__ \\ |\n");
 		printf("|_|  \\___| \\_/ \\___|_|  |___/_|\n\n");
 
-		printf("[1] New game\n");
-		printf("[2] Load game\n");
+		printf("[1] New\n");
+		printf("[2] Load\n");
 		printf("[3] Config\n");
 		printf("[q] Quit\n\n");
 

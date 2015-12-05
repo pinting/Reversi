@@ -7,9 +7,6 @@
 #include "ai.h"
 #include "rucz.h"
 
-/// \mainpage Reversi
-/// Reversi realization in pure C.
-
 /// Config file where the options will be held.
 #define CONFIG "config.cfg"
 
