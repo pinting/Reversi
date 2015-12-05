@@ -3,7 +3,6 @@
 static Rucz rucz; // Rucz AI
 static AI ai; // Default AI
 
-// Create a new game with the default options.
 Game game_new(void)
 {
 	List *config;
@@ -22,7 +21,8 @@ Game game_new(void)
 	return game;
 }
 
-// Check if the game has ended.
+/// Check if the game has ended.
+/// @param game Game struct.
 static Bool game_ended(Game *game)
 {
 	int min = board_moves_left(&game->board, MIN);
@@ -36,7 +36,6 @@ static Bool game_ended(Game *game)
 	return FALSE;
 }
 
-// Start the gameplay.
 Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool, Cell), void (*dump)(Board *, int, int), void (*passed)(Cell))
 {
 	Cell type;
@@ -112,7 +111,6 @@ Bool game_start(Game *game, Bool (*input)(int *, int *), void (*before)(Bool, Ce
 	}
 }
 
-// Calculate the best move with the chosen AI.
 Bool game_ai(Game *game, Cell type, int *x, int *y, Bool rucz_enabled)
 {
 	if (rucz_enabled && rucz_test(&rucz, &game->board, type, x, y))
@@ -129,7 +127,6 @@ Bool game_ai(Game *game, Cell type, int *x, int *y, Bool rucz_enabled)
 	return ai_test(&ai, &game->board, type, x, y);
 }
 
-// Export game options to a file.
 Bool game_export(Game *game, char *path)
 {
 	List *config;
@@ -152,7 +149,6 @@ Bool game_export(Game *game, char *path)
 	return TRUE;
 }
 
-// Import options of a game from a file.
 Bool game_import(Game *game, char *path)
 {
 	List *config;
@@ -183,7 +179,6 @@ Bool game_import(Game *game, char *path)
 	return TRUE;
 }
 
-// Init the game and load a board from a save file.
 Bool game_load(Game *game, char *path)
 {
 	char buffer[64];
@@ -203,7 +198,6 @@ Bool game_load(Game *game, char *path)
 	return TRUE;
 }
 
-// Save the board to a file.
 Bool game_save(Game *game, char *path)
 {
 	char buffer[64];
@@ -213,7 +207,6 @@ Bool game_save(Game *game, char *path)
 	return board_save(&game->board, buffer);
 }
 
-// End the game and get the winner cell.
 Cell game_end(Game *game)
 {
 	int min, max, now;
@@ -247,7 +240,6 @@ Cell game_end(Game *game)
 	}
 }
 
-// Init the game with the given options.
 void game_init(Game *game)
 {
 	rucz = rucz_init(abs(cfg(RUCZ)));
@@ -257,7 +249,6 @@ void game_init(Game *game)
 	board_init(&game->board, cfg(RANDOM));
 }
 
-// Free up the game.
 void game_free(Game *game)
 {
 	list_free(game->config);

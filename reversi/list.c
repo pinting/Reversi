@@ -1,6 +1,5 @@
 #include "list.h"
 
-// Create a new list.
 List *list_new(int key, int value)
 {
 	List *first;
@@ -14,7 +13,6 @@ List *list_new(int key, int value)
 	return first;
 }
 
-// Get an item from the list by its key.
 List *list_get(List *list, int key)
 {
 	list_seek_start(&list);
@@ -30,7 +28,6 @@ List *list_get(List *list, int key)
 	return NULL;
 }
 
-// Get a value from the list by its key.
 int list_value(List *list, int key)
 {
 	List *element;
@@ -45,7 +42,6 @@ int list_value(List *list, int key)
 	return 0;
 }
 
-// Add a new element to the list.
 void list_add(List *list, int key, int value)
 {
 	List *next;
@@ -57,19 +53,16 @@ void list_add(List *list, int key, int value)
 	list->next = next;
 }
 
-// Seek to the begining of the list.
 void list_seek_start(List **list)
 {
 	for (; (*list)->prev != NULL; *list = (*list)->prev);
 }
 
-// Seek to the end of the list.
 void list_seek_end(List **list)
 {
 	for (; (*list)->next != NULL; *list = (*list)->next);
 }
 
-// Free the list.
 void list_free(List *list)
 {
 	list_seek_start(&list);

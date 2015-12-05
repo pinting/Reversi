@@ -1,10 +1,15 @@
 #include "ai.h"
 
-// Calculate the best next move of a type.
-// @init means the start value, which should be 0.
-// @level means the maximum search level.
-// @alpha means the deafult alpha size (-INF).
-// @beta means the default beta size (+INF).
+/// Calculate the best next move of a type.
+/// @param ai AI struct.
+/// @param board Board structure.
+/// @param type Cell type.
+/// @param init Means the start value, which should be 0.
+/// @param level Means the maximum search level.
+/// @param alpha Means the deafult alpha size (-INF).
+/// @param beta Means the default beta size (+INF).
+/// @param res_x Result X coord.
+/// @param res_y Result Y coord.
 static int ai_calc(AI *ai, Board *board, Cell type, int init, int level, int alpha, int beta, int *res_x, int *res_y)
 {
 	int value, x, y, count, count_rev, best_x, best_y;
@@ -114,7 +119,6 @@ static int ai_calc(AI *ai, Board *board, Cell type, int init, int level, int alp
 	return type == MAX ? alpha : beta;
 }
 
-// Get the best move coords with a type.
 Bool ai_test(AI *ai, Board *board, Cell type, int *x, int *y)
 {
 	*x = -1;
@@ -132,7 +136,6 @@ Bool ai_test(AI *ai, Board *board, Cell type, int *x, int *y)
 	return FALSE;
 }
 
-// Init the AI.
 AI ai_init(Bool pass, Bool random, int level)
 {
 	AI ai;

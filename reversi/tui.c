@@ -23,9 +23,9 @@ static void tui_pause(void)
 }
 
 /// Dump the board to the standard output.
-/// @param board Board structure
-/// @param last_x The last movement X coord
-/// @param last_y The last movement Y coord
+/// @param board Board structure.
+/// @param last_x The last movement X coord.
+/// @param last_y The last movement Y coord.
 static void tui_dump(Board *board, int last_x, int last_y)
 {
 	int x, y;
@@ -73,7 +73,7 @@ static void tui_dump(Board *board, int last_x, int last_y)
 	printf("\n");
 }
 
-// Save the board.
+/// Save the board to the given file.
 static void tui_save(void)
 {
 	char buffer[64];
@@ -88,7 +88,9 @@ static void tui_save(void)
 
 }
 
-// Get an input.
+/// Get an input.
+/// @param x X coord.
+/// @param y Y coord.
 static Bool tuti_input(int *x, int *y)
 {
 	char buffer[64];
@@ -121,7 +123,9 @@ static Bool tuti_input(int *x, int *y)
 	}
 }
 
-// Executed before moves.
+/// Executed before moves.
+/// @param ai The move was executed by an AI?
+/// @param type Type of the player who moved.
 static void tui_before(Bool ai, Cell type)
 {
 	printf("%c turn!\n", type == MAX ? 'X' : 'O');
@@ -138,14 +142,15 @@ static void tui_before(Bool ai, Cell type)
 	}
 }
 
-// Executed on pass.
+/// Executed on pass.
+/// @param type Type of the player who passed.
 static void tui_passed(Cell type)
 {
 	printf("%c turn!\n", type == MAX ? 'X' : 'O');
 	printf("Pass!\n\n");
 }
 
-// End the game and print the winner.
+/// End the game and print the winner.
 static void tui_end(void)
 {
 	switch (game_end(game))
@@ -164,14 +169,14 @@ static void tui_end(void)
 	tui_pause();
 }
 
-// Show help message before the gameplay.
+/// Show a help message before the gameplay.
 static void tui_help(void)
 {
 	printf("[s] Save\n");
 	printf("[q] Quit\n");
 }
 
-// Start a new game.
+/// Start a new game.
 static void tui_new(void)
 {
 	tui_clear();
@@ -184,7 +189,7 @@ static void tui_new(void)
 	}
 }
 
-// Load a game.
+/// Load a game.
 static void tui_load(void)
 {
 	char buffer[64];
@@ -204,7 +209,7 @@ static void tui_load(void)
 	}
 }
 
-// Dump the config to the stdout.
+/// Dump the config to the stdout.
 static void tui_config_dump(void)
 {
 	List *config;
@@ -244,7 +249,8 @@ static void tui_config_dump(void)
 	printf("[q] Quit\n\n");
 }
 
-// Scan an int.
+/// Scan an int for the configuration.
+/// @param buffer Input buffer. 
 static int tui_config_scan(char *buffer)
 {
 	int count;
@@ -254,7 +260,7 @@ static int tui_config_scan(char *buffer)
 	return count;
 }
 
-// Show the config screen.
+/// Show the config screen.
 static void tui_config(void)
 {
 	int key, value, c;
@@ -309,7 +315,6 @@ static void tui_config(void)
 	tui_pause();
 }
 
-// Show the main menu.
 void tui_start(Game *_game)
 {
 	char buffer;

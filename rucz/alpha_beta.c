@@ -3,8 +3,6 @@
 
 #include "alpha_beta.h"
 
-
-
 void alpha_beta_init(alpha_beta_data_t *abd)
 {
 	int l;

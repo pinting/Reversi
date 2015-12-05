@@ -1,6 +1,7 @@
 #include "rucz.h"
 
-// Convert cell to field.
+/// Convert cell to field.
+/// @param source Cell type.
 static field_t rucz_field(Cell source)
 {
 	switch (source)
@@ -16,7 +17,10 @@ static field_t rucz_field(Cell source)
 	}
 }
 
-// Convert the board to the rucz format.
+/// Convert the board to the rucz format.
+/// @param source Board struct.
+/// @param type Cell type.
+/// @param dest Rucz board_t struct.
 static void rucz_board(Board *source, Cell type, board_t *dest)
 {
 	int x, y;
@@ -32,7 +36,6 @@ static void rucz_board(Board *source, Cell type, board_t *dest)
 	dest->turn = rucz_field(type);
 }
 
-// Search for the best move.
 Bool rucz_test(Rucz *rucz, Board *board, Cell type, int *x, int *y)
 {
 	reversi_ai_data_t aid;
@@ -63,13 +66,11 @@ Bool rucz_test(Rucz *rucz, Board *board, Cell type, int *x, int *y)
 	return TRUE;
 }
 
-// Free it up.
 void rucz_free(Rucz *rucz)
 {
 	alpha_beta_finish(&rucz->abd);
 }
 
-// Init the rucz AI.
 Rucz rucz_init(int level)
 {
 	Rucz rucz;

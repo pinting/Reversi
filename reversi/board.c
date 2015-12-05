@@ -1,6 +1,5 @@
 #include "board.h"
 
-// Create a new board.
 Board board_new(int size)
 {
 	Board board;
@@ -11,7 +10,6 @@ Board board_new(int size)
 	return board;
 }
 
-// Load board from a file.
 Board board_load(char *path)
 {
 	Bool first = FALSE;
@@ -58,7 +56,6 @@ Board board_load(char *path)
 	return board;
 }
 
-// Get the value of a cell.
 Cell board_get(Board *board, int x, int y)
 {
 	if (board_inside(board, x, y))
@@ -70,7 +67,6 @@ Cell board_get(Board *board, int x, int y)
 	return 0;
 }
 
-// Check the type of a cell.
 Bool board_check(Board *board, int x, int y, Cell type)
 {
 	if (board_inside(board, x, y) && board_get(board, x, y) == type)
@@ -81,7 +77,6 @@ Bool board_check(Board *board, int x, int y, Cell type)
 	return FALSE;
 }
 
-// Set a type for a cell.
 Bool board_set(Board *board, int x, int y, Cell type)
 {
 	if (board_inside(board, x, y))
@@ -94,7 +89,6 @@ Bool board_set(Board *board, int x, int y, Cell type)
 	return FALSE;
 }
 
-// Check if the given cell is inside the board.
 Bool board_inside(Board *board, int x, int y)
 {
 	if (x < board->size && y < board->size && x >= 0 && y >= 0)
@@ -106,7 +100,6 @@ Bool board_inside(Board *board, int x, int y)
 	return FALSE;
 }
 
-// Save board to a file.
 Bool board_save(Board *board, char *path)
 {
 	FILE *file;
@@ -132,7 +125,13 @@ Bool board_save(Board *board, char *path)
 	return TRUE;
 }
 
-// Draw a line on the board with the given type - only 8 directions are supported.
+/// Draw a line on the board with the given type - only 8 directions are supported.
+/// @param board Board structure.
+/// @param type Cell type.
+/// @param x1 From X coord.
+/// @param y1 From Y coord.
+/// @param x2 To X coord.
+/// @param y2 To Y coord.
 static void board_line(Board *board, Cell type, int x1, int y1, int x2, int y2)
 {
 	int step_x = x1 == x2 ? 0 : x1 < x2 ? 1 : -1;
@@ -152,8 +151,6 @@ static void board_line(Board *board, Cell type, int x1, int y1, int x2, int y2)
 	}
 }
 
-// Make a move on the board with the given type and coordinates. If the test parameter is true,
-// the move will not be made - just tested.
 int board_move(Board *board, int x, int y, Cell type, Bool test)
 {
 	int step_x, step_y, last_x, last_y, i;
@@ -216,7 +213,6 @@ int board_move(Board *board, int x, int y, Cell type, Bool test)
 	return count;
 }
 
-// Count the number of moves left with the given type.
 int board_moves_left(Board *board, Cell type)
 {
 	int count = 0;
@@ -236,7 +232,6 @@ int board_moves_left(Board *board, Cell type)
 	return count;
 }
 
-// Check if cell is in the corner.
 int board_corner(Board *board, int x, int y)
 {
 	if ((x == 0 && y == 0) ||
@@ -255,7 +250,6 @@ int board_corner(Board *board, int x, int y)
 	return 0;
 }
 
-// Count the number of types on the board.
 int board_count(Board *board, Cell type)
 {
 	int count = 0;
@@ -275,7 +269,6 @@ int board_count(Board *board, Cell type)
 	return count;
 }
 
-// Copy the board from one array to another.
 void board_copy(Board *target, Board *source)
 {
 	int x, y;
@@ -298,7 +291,6 @@ void board_copy(Board *target, Board *source)
 	debug(3, "Board copied!\n");
 }
 
-// Init a board.
 void board_init(Board *board, Bool random)
 {
 	int x, y, c;
@@ -323,7 +315,6 @@ void board_init(Board *board, Bool random)
 	board_set(board, c, c, type);
 }
 
-// Free up a board.
 void board_free(Board *board)
 {
 	free(board->cells);
